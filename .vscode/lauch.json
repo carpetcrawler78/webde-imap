@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug webde_imap",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/webde_imap.py",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
