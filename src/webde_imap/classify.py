@@ -1,3 +1,4 @@
+import re
 from email.utils import parseaddr
 
 from .mail_content import decode_mime_header
@@ -5,10 +6,24 @@ from .mail_content import decode_mime_header
 CATEGORIES = ("JOB", "MESSAGE", "APPLICATION", "IMPORTANT", "IGNORE", "REVIEW")
 
 
+def _keyword_pattern(keyword):
+    """Word-boundary regex for a keyword/phrase.
+
+    Plain substring matching lets keywords fire inside unrelated German compound
+    words (e.g. "kuendigung" inside "ankuendigung"). \\b only applies where the
+    keyword actually starts/ends on a word character, so punctuation-leading
+    keywords like "% off" still match as plain substrings at that end.
+    """
+    escaped = re.escape(keyword)
+    prefix = r"\b" if keyword[:1].isalnum() else ""
+    suffix = r"\b" if keyword[-1:].isalnum() else ""
+    return re.compile(prefix + escaped + suffix, re.IGNORECASE)
+
+
 def _matches_any(haystack, needles):
     if not haystack:
         return False
-    return any(needle.lower() in haystack for needle in needles)
+    return any(_keyword_pattern(needle).search(haystack) for needle in needles)
 
 
 def _sender_parts(message):
