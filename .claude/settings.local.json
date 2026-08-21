@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/Scripts/python.exe --version)",
+      "Bash(.venv/Scripts/python.exe -c \"import dotenv\")",
+      "Bash(PYTHONPATH=src .venv/Scripts/python.exe -m unittest discover -s tests -v)"
+    ]
+  }
+}

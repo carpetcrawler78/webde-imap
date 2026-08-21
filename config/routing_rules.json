@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "job_platforms": [
+    {
+      "name": "LinkedIn Jobs",
+      "sender_local_parts": ["jobs-noreply", "jobalerts-noreply"],
+      "list_id_patterns": ["jobs-listings.linkedin.com"],
+      "subject_keywords": ["job alert", "empfohlener job", "jobs for you", "neue jobs für dich"]
+    },
+    {
+      "name": "XING Jobs",
+      "sender_local_parts": ["jobs", "jobmarket", "jobagent"],
+      "list_id_patterns": ["jobs.xing.com"],
+      "subject_keywords": ["neue jobs", "job-empfehlung", "stellenangebote", "jobagent"]
+    },
+    {
+      "name": "StepStone",
+      "sender_domains": ["stepstone.de", "stepstone.com"],
+      "subject_keywords": ["neue stellenangebote", "job-alarm", "job alert"]
+    },
+    {
+      "name": "Indeed",
+      "sender_domains": ["indeed.com"],
+      "subject_keywords": ["new jobs for you", "neue jobs", "job-updates"]
+    },
+    {
+      "name": "jobvector",
+      "sender_domains": ["jobvector.de"],
+      "subject_keywords": ["neue stellenangebote", "job-alarm"]
+    },
+    {
+      "name": "Get in IT",
+      "sender_domains": ["get-in-it.de"],
+      "subject_keywords": ["neue jobs", "stellenangebote"]
+    }
+  ],
+  "message_platforms": [
+    {
+      "name": "LinkedIn Messaging",
+      "sender_domains": ["linkedin.com"],
+      "sender_local_parts": ["messaging-digest-noreply", "messages-noreply", "messaging-noreply"],
+      "subject_keywords": ["sent you a message", "hat ihnen eine nachricht gesendet", "new message from"]
+    },
+    {
+      "name": "XING Messaging",
+      "sender_domains": ["xing.com"],
+      "sender_local_parts": ["messages", "nachrichten"],
+      "subject_keywords": ["neue nachricht", "hat dir geschrieben"]
+    }
+  ],
+  "application_keywords": {
+    "subject_or_body": [
+      "bewerbung", "vorstellungsgespräch", "vorstellungsgespraech", "interview",
+      "absage", "zusage", "vertragsangebot", "arbeitsvertrag", "unterlagen einreichen",
+      "application status", "we regret to inform", "we are pleased to offer",
+      "onboarding", "eingangsbestätigung", "eingangsbestaetigung", "terminvorschlag"
+    ]
+  },
+  "important_keywords": {
+    "subject_or_body": [
+      "sicherheitswarnung", "security alert", "kontosicherheit", "passwort zurücksetzen",
+      "passwort zuruecksetzen", "rechnung", "zahlungserinnerung", "mahnung",
+      "kündigung", "kuendigung", "frist", "deadline", "finanzamt", "versicherung",
+      "behörde", "behoerde", "vertragsänderung", "vertragsaenderung"
+    ]
+  },
+  "ignore_signals": {
+    "subject_or_body_keywords": [
+      "rabatt", "gutschein", "black friday", "cyber monday", "% off",
+      "jetzt einkaufen", "sale", "angebot der woche", "newsletter abbestellen"
+    ]
+  }
+}

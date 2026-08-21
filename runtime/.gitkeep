@@ -1,0 +1,3 @@
+Placeholder so this directory exists in git. webde_state.json is created here by the
+first real (non-dry-run) run and updated by the workflow. Contains only technical IMAP
+state -- never mail content. See README.md section 6.

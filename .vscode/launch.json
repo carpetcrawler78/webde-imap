@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug webde_imap (dry-run)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "webde_imap.cli",
+      "args": ["--dry-run"],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
