@@ -1,4 +1,5 @@
 import dataclasses
+import re
 from email.header import decode_header
 from html.parser import HTMLParser
 from typing import List, Optional, Tuple
@@ -18,7 +19,14 @@ def decode_mime_header(value):
         else:
             decoded_parts.append(chunk)
 
-    return "".join(decoded_parts).strip()
+    joined = "".join(decoded_parts)
+    # Some real-world mail decodes to a header value containing a literal
+    # embedded CR/LF (e.g. multi-line subjects). Python's email policy rejects
+    # raw newlines in an outgoing header value (ValueError), and a multi-line
+    # value would also break the single-line header block in the forwarded
+    # body -- collapse to spaces so this is always safe to reuse either way.
+    single_line = re.sub(r"[\r\n]+", " ", joined)
+    return re.sub(r" {2,}", " ", single_line).strip()
 
 
 class TextAndLinksExtractor(HTMLParser):

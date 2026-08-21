@@ -1,8 +1,26 @@
 import unittest
+from email.header import Header
 
-from webde_imap.mail_content import extract_attachments, extract_full_body
+from webde_imap.mail_content import decode_mime_header, extract_attachments, extract_full_body
 
 from helpers import add_attachment, make_html_only_message, make_plain_message, reload_message
+
+
+class DecodeMimeHeaderTestCase(unittest.TestCase):
+    def test_strips_embedded_newlines_from_encoded_header(self):
+        # Real-world case: some senders (e.g. GitHub Actions notifications) produce
+        # RFC 2047 encoded-word subjects that decode to a literal embedded newline.
+        # Reusing this as an outgoing header value must not raise or break layout.
+        header = Header("Run failed: Ntfy Outbox - main\n (89ee304)", "utf-8")
+        decoded = decode_mime_header(header.encode())
+        self.assertNotIn("\n", decoded)
+        self.assertNotIn("\r", decoded)
+        self.assertIn("Run failed: Ntfy Outbox - main", decoded)
+        self.assertIn("(89ee304)", decoded)
+
+    def test_collapses_double_spaces_left_by_newline_removal(self):
+        decoded = decode_mime_header("=?utf-8?Q?Hello=0A=20World?=")
+        self.assertEqual(decoded, "Hello World")
 
 
 class ExtractFullBodyTestCase(unittest.TestCase):
