@@ -6,6 +6,10 @@ from email import message_from_bytes
 from email.header import decode_header
 from email.message import Message
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 STATE_NAMESPACE = "WEBDE_IMAP"
 INBOX_STATE_KEY = "inbox_last_uid"
 SENT_STATE_KEY = "sent_last_uid"
