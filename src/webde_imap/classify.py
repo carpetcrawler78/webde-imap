@@ -53,22 +53,79 @@ def _match_platform_group(message, subject_lower, body_lower, group):
     return False
 
 
+def _is_known_noise_sender(message, ignore_signals):
+    """Hard-blocked senders (e.g. finance-advice newsletters, association mailings) --
+    always IGNORE regardless of content, no topic exception."""
+    local_part, domain = _sender_parts(message)
+    ignore_domains = ignore_signals.get("sender_domains", [])
+    ignore_local_parts = ignore_signals.get("sender_local_parts", [])
+    return (domain and any(d.lower() in domain for d in ignore_domains)) or (
+        local_part and any(lp.lower() in local_part for lp in ignore_local_parts)
+    )
+
+
+def _is_topic_override_sender(message, ignore_signals):
+    """News/media outlets that are noise by default, but should NOT be ignored
+    when a specific edition is dedicated to an AI/data-science-relevant topic."""
+    _, domain = _sender_parts(message)
+    override_domains = ignore_signals.get("topic_override_sender_domains", [])
+    return bool(domain) and any(d.lower() in domain for d in override_domains)
+
+
+def _has_topic_override_keyword(subject_lower, body_lower, ignore_signals):
+    topic_keywords = ignore_signals.get("topic_override_keywords", [])
+    return _matches_any(subject_lower, topic_keywords) or _matches_any(body_lower, topic_keywords)
+
+
 def classify_message(message, content, rules):
     """Deterministic, config-driven classification. No LLM/API calls.
 
-    Precedence (short-circuit): JOB > MESSAGE > APPLICATION > IMPORTANT > IGNORE > REVIEW.
-    Job/message platform allowlists are checked before the List-Unsubscribe/IGNORE
-    check, so a job digest with newsletter headers still resolves to JOB, not IGNORE.
+    Precedence (short-circuit): JOB > MESSAGE > hard-noise-sender IGNORE >
+    news-outlet IGNORE (unless AI/data-science topic override) > APPLICATION >
+    IMPORTANT > generic-keyword IGNORE > REVIEW.
+
+    Job/message platform allowlists are checked before any IGNORE check, so a
+    job digest with newsletter headers still resolves to JOB, not IGNORE.
+
+    Sender-identity IGNORE checks (ignore_signals.sender_domains/sender_local_parts
+    and topic_override_sender_domains) run *before* the generic APPLICATION/
+    IMPORTANT body-keyword scan: a specific newsletter's sender identity is a far
+    more precise signal than a single word like "Interview" or "Rechnung"
+    appearing incidentally in that newsletter's prose, so it must win to avoid
+    mislabeling known noise as APPLICATION/IMPORTANT.
+
+    News/media outlets in topic_override_sender_domains (e.g. Spiegel, Tagesspiegel
+    Background) are noise by default, but a specific edition mentioning an
+    AI/data-science keyword (topic_override_keywords) is let through instead of
+    being ignored -- generic news is out, dedicated AI/data-science coverage is not.
+
+    The generic subject/body IGNORE keywords (e.g. "Rabatt", "Sale") stay checked
+    last, after APPLICATION/IMPORTANT, since they are not sender-specific and a
+    genuinely important mail could plausibly contain one incidentally.
+
     Anything not confidently matched defaults to REVIEW, never to IGNORE.
     """
     subject_lower = decode_mime_header(message.get("Subject")).lower()
     body_lower = (content.body_text or "").lower()
+    has_list_unsubscribe = bool(message.get("List-Unsubscribe"))
+    ignore_signals = rules.get("ignore_signals", {})
 
     if _match_platform_group(message, subject_lower, body_lower, rules.get("job_platforms", [])):
         return "JOB"
 
     if _match_platform_group(message, subject_lower, body_lower, rules.get("message_platforms", [])):
         return "MESSAGE"
+
+    if _is_known_noise_sender(message, ignore_signals):
+        # No List-Unsubscribe gate here: this list is hand-curated from reviewed
+        # real mail (unlike the generic keyword list below), and some legitimate
+        # newsletters (e.g. association/club mailings) omit that header entirely.
+        return "IGNORE"
+
+    if _is_topic_override_sender(message, ignore_signals) and not _has_topic_override_keyword(
+        subject_lower, body_lower, ignore_signals
+    ):
+        return "IGNORE"
 
     application_keywords = rules.get("application_keywords", {}).get("subject_or_body", [])
     if _matches_any(subject_lower, application_keywords) or _matches_any(body_lower, application_keywords):
@@ -78,9 +135,9 @@ def classify_message(message, content, rules):
     if _matches_any(subject_lower, important_keywords) or _matches_any(body_lower, important_keywords):
         return "IMPORTANT"
 
-    has_list_unsubscribe = bool(message.get("List-Unsubscribe"))
-    ignore_keywords = rules.get("ignore_signals", {}).get("subject_or_body_keywords", [])
-    if has_list_unsubscribe and (_matches_any(subject_lower, ignore_keywords) or _matches_any(body_lower, ignore_keywords)):
+    ignore_keywords = ignore_signals.get("subject_or_body_keywords", [])
+    keyword_hit = _matches_any(subject_lower, ignore_keywords) or _matches_any(body_lower, ignore_keywords)
+    if has_list_unsubscribe and keyword_hit:
         return "IGNORE"
 
     return "REVIEW"

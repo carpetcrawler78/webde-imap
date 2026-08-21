@@ -83,6 +83,17 @@
     "subject_or_body_keywords": [
       "rabatt", "gutschein", "black friday", "cyber monday", "% off",
       "jetzt einkaufen", "sale", "angebot der woche", "newsletter abbestellen"
+    ],
+    "sender_domains": ["finanztip.de", "e-zeitung.vdk.de", "neuefische.de"],
+    "sender_local_parts": ["dastutmirgut"],
+    "topic_override_sender_domains": [
+      "angebote.spiegel.de", "background.tagesspiegel.de", "email.wiwo.de",
+      "sifted.eu", "sueddeutsche.de", "newsletter.sueddeutsche.de"
+    ],
+    "topic_override_keywords": [
+      "ki", "künstliche intelligenz", "kuenstliche intelligenz", "artificial intelligence",
+      "machine learning", "data science", "llm", "chatgpt", "openai", "anthropic",
+      "deep learning", "neural network", "large language model", "gpt-4", "gpt-5"
     ]
   }
 }

@@ -94,6 +94,68 @@ class ClassifyTestCase(unittest.TestCase):
         )
         self.assertEqual(self._classify(msg), "IGNORE")
 
+    def test_known_generic_newsletter_ignored_despite_coincidental_keyword_hit(self):
+        # A finance-advice newsletter that happens to mention "Rechnung"/"Kuendigung"
+        # in a generic example, not the user's own -- known-noise-domain + List-Unsubscribe
+        # must route this to IGNORE instead of a coincidental IMPORTANT/APPLICATION hit.
+        msg = make_plain_message(
+            subject="Tagesgeld-Rekord im Check",
+            from_addr="newsletter@finanztip.de",
+            body="So sieht die Rechnung aus, und der Kuendigungsservice erledigt das fuer dich.",
+            list_unsubscribe="<https://finanztip.de/unsubscribe>",
+        )
+        self.assertEqual(self._classify(msg), "IGNORE")
+
+    def test_news_outlet_ignored_by_default(self):
+        msg = make_plain_message(
+            subject="Zerreisst es die CDU?",
+            from_addr="newsletter@angebote.spiegel.de",
+            body="Die politische Lage am Morgen, ganz ohne Technologiethema.",
+            list_unsubscribe="<https://spiegel.de/unsubscribe>",
+        )
+        self.assertEqual(self._classify(msg), "IGNORE")
+
+    def test_news_outlet_with_ai_topic_is_not_ignored(self):
+        # Same outlet as above, but this specific edition is dedicated to AI --
+        # must NOT be swallowed as generic news noise.
+        msg = make_plain_message(
+            subject="KI-Airbus: Braucht es einen neuen Anlauf?",
+            from_addr="noreply@background.tagesspiegel.de",
+            body="Ein Ueberblick zur Debatte um Kuenstliche Intelligenz in der Industriepolitik.",
+            list_unsubscribe="<https://background.tagesspiegel.de/unsubscribe>",
+        )
+        self.assertEqual(self._classify(msg), "REVIEW")
+
+    def test_finance_newsletter_stays_ignored_even_with_ai_mention(self):
+        # Finanztip is a hard-blocked sender (not a news outlet) -- a passing "KI"
+        # mention among unrelated finance bullet points must not rescue it.
+        msg = make_plain_message(
+            subject="Tagesgeld-Rekord im Check ++ KI-Blase ++ Gaspreis-Hoch",
+            from_addr="newsletter@finanztip.de",
+            body="Zinsen, Gaspreise und eine kurze Erwaehnung der KI-Blase an den Maerkten.",
+            list_unsubscribe="<https://finanztip.de/unsubscribe>",
+        )
+        self.assertEqual(self._classify(msg), "IGNORE")
+
+    def test_known_noise_sender_ignored_even_without_list_unsubscribe_header(self):
+        # Real-world case: some association newsletters (e.g. VdK) omit
+        # List-Unsubscribe entirely -- the curated sender list must not depend on it.
+        msg = make_plain_message(
+            subject="Ihre digitale Zeitung - Ausgabe September",
+            from_addr="baden-wuerttemberg@e-zeitung.vdk.de",
+            body="Ein Mitglied erklaert im Interview, warum ihr das wichtig ist.",
+        )
+        self.assertEqual(self._classify(msg), "IGNORE")
+
+    def test_known_newsletter_sender_local_part_ignored(self):
+        msg = make_plain_message(
+            subject="Laesst sich die Persoenlichkeit veraendern?",
+            from_addr="dastutmirgut@zeit.de",
+            body="Ein Interview zum Thema Persoenlichkeitsentwicklung.",
+            list_unsubscribe="<https://zeit.de/unsubscribe>",
+        )
+        self.assertEqual(self._classify(msg), "IGNORE")
+
     def test_job_allowlist_overrides_newsletter_heuristic(self):
         # Job alerts also carry List-Unsubscribe headers -- the job-platform match
         # must win before the generic newsletter/IGNORE check is ever reached.
