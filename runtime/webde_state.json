@@ -1,8 +1,11 @@
 {
-  "folder": "INBOX",
-  "last_processed_uid": 1374040403,
-  "last_run_at_utc": "2026-08-21T13:57:16+00:00",
+  "folders": {
+    "INBOX": {
+      "last_processed_uid": 1374040403,
+      "uidvalidity": 1
+    }
+  },
+  "last_run_at_utc": "2026-08-21T14:48:08+00:00",
   "last_run_status": "OK",
-  "uidvalidity": 1,
-  "version": 1
+  "version": 2
 }
