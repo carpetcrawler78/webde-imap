@@ -8,6 +8,14 @@ load_dotenv()
 
 DEFAULT_ATTACHMENT_CAP_BYTES = 10 * 1024 * 1024
 DEFAULT_ROUTING_RULES_PATH = Path(__file__).resolve().parents[2] / "config" / "routing_rules.json"
+DEFAULT_FOLDERS = ["INBOX"]
+
+
+def _parse_folders(raw):
+    if not raw:
+        return list(DEFAULT_FOLDERS)
+    folders = [folder.strip() for folder in raw.split(",") if folder.strip()]
+    return folders or list(DEFAULT_FOLDERS)
 
 
 def load_config():
@@ -15,7 +23,7 @@ def load_config():
         "imap_server": os.environ["WEBDE_IMAP_SERVER"],
         "imap_username": os.environ["WEBDE_IMAP_USERNAME"],
         "imap_password": os.environ["WEBDE_IMAP_PASSWORD"],
-        "inbox_folder": os.environ.get("WEBDE_IMAP_INBOX_FOLDER") or "INBOX",
+        "folders": _parse_folders(os.environ.get("WEBDE_IMAP_FOLDERS")),
         "smtp_server": os.environ.get("WEBDE_SMTP_SERVER"),
         "smtp_port": int(os.environ.get("WEBDE_SMTP_PORT") or 587),
         "smtp_username": os.environ.get("WEBDE_SMTP_USERNAME"),

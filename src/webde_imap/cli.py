@@ -61,9 +61,15 @@ def main(argv=None):
         imap_client.logout(mail)
 
     print(
-        f"processed={len(result.processed_uids)} forwarded={result.forwarded_count} "
+        f"processed={result.total_processed} forwarded={result.forwarded_count} "
         f"ignored={result.ignored_count} had_failure={result.had_failure}"
     )
+    for folder_result in result.folder_results:
+        print(
+            f"  folder={folder_result.folder} processed={len(folder_result.processed_uids)} "
+            f"forwarded={folder_result.forwarded_count} ignored={folder_result.ignored_count} "
+            f"had_failure={folder_result.had_failure}"
+        )
 
     return 1 if result.had_failure else 0
 

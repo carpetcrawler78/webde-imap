@@ -30,8 +30,23 @@
     },
     {
       "name": "Get in IT",
-      "sender_domains": ["get-in-it.de"],
-      "subject_keywords": ["neue jobs", "stellenangebote"]
+      "sender_domains": ["get-in.de"],
+      "subject_keywords": ["neue jobs", "stellenangebote", "anfrage von"]
+    },
+    {
+      "name": "jobs.t3n.de",
+      "sender_domains": ["jobs.t3n.de"],
+      "subject_keywords": ["job-alarm", "neuer job", "neue jobs"]
+    },
+    {
+      "name": "Adzuna",
+      "sender_domains": ["adzuna.de", "adzuna.co.uk", "adzuna.com"],
+      "subject_keywords": ["jobs in"]
+    },
+    {
+      "name": "Workwise",
+      "sender_domains": ["workwise.io"],
+      "subject_keywords": ["jobs gefunden", "neue jobs", "neustart beginnt"]
     }
   ],
   "message_platforms": [

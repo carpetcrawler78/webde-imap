@@ -19,8 +19,14 @@ def logout(mail):
         pass
 
 
+def _quote_folder(folder):
+    # Folder names containing spaces (e.g. "Social Media") must be IMAP string
+    # literals; quoting plain names like INBOX is harmless too.
+    return f'"{folder}"'
+
+
 def get_uidvalidity(mail, folder):
-    status, data = mail.status(folder, "(UIDVALIDITY)")
+    status, data = mail.status(_quote_folder(folder), "(UIDVALIDITY)")
     if status != "OK" or not data or not data[0]:
         raise RuntimeError(f"STATUS UIDVALIDITY failed for folder '{folder}'.")
     match = UIDVALIDITY_PATTERN.search(data[0])
@@ -30,7 +36,7 @@ def get_uidvalidity(mail, folder):
 
 
 def select_readonly(mail, folder):
-    status, _ = mail.select(folder, readonly=True)
+    status, _ = mail.select(_quote_folder(folder), readonly=True)
     if status != "OK":
         raise RuntimeError(f"Could not select folder '{folder}' in read-only mode.")
 
