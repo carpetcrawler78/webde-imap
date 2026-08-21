@@ -55,7 +55,7 @@ jobs:
           WEBDE_IMAP_SERVER: ${{ secrets.WEBDE_IMAP_SERVER }}
           WEBDE_IMAP_USERNAME: ${{ secrets.WEBDE_IMAP_USERNAME }}
           WEBDE_IMAP_PASSWORD: ${{ secrets.WEBDE_IMAP_PASSWORD }}
-          WEBDE_IMAP_FOLDERS: ${{ vars.WEBDE_IMAP_FOLDERS }}
+          WEBDE_IMAP_FOLDERS: ${{ secrets.WEBDE_IMAP_FOLDERS || vars.WEBDE_IMAP_FOLDERS }}
           WEBDE_SMTP_SERVER: ${{ secrets.WEBDE_SMTP_SERVER }}
           WEBDE_SMTP_PORT: ${{ secrets.WEBDE_SMTP_PORT }}
           WEBDE_SMTP_USERNAME: ${{ secrets.WEBDE_SMTP_USERNAME }}

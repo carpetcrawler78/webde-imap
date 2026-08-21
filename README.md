@@ -76,6 +76,10 @@ Optionale Repository Variables (Settings -> Secrets and variables -> Actions -> 
 | `WEBDE_MAX_ATTACHMENT_TOTAL_BYTES` | Gesamt-Anhangsgroesse pro Mail | `10485760` (10 MiB) |
 | `WEBDE_MAX_BODY_CHARS` | Optionale Kuerzung sehr langer Mailtexte | unbegrenzt |
 
+`WEBDE_IMAP_FOLDERS` wird im Workflow sowohl aus Secrets als auch aus Variables gelesen
+(`secrets.WEBDE_IMAP_FOLDERS || vars.WEBDE_IMAP_FOLDERS`) -- es ist also egal, in welchem der beiden
+Tabs du es anlegst.
+
 Lokal: dieselben Variablen in `.env` (bereits `.gitignore`-geschuetzt).
 
 ## 4. Routing-Logik
