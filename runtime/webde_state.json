@@ -5,15 +5,15 @@
       "uidvalidity": 1
     },
     "Social Media": {
-      "last_processed_uid": 2421,
+      "last_processed_uid": 2422,
       "uidvalidity": 1338215502
     },
     "Unbekannt": {
-      "last_processed_uid": 1374061760,
+      "last_processed_uid": 1374061761,
       "uidvalidity": 1
     }
   },
-  "last_run_at_utc": "2026-08-23T11:06:55+00:00",
+  "last_run_at_utc": "2026-08-23T11:33:40+00:00",
   "last_run_status": "OK",
   "version": 2
 }
