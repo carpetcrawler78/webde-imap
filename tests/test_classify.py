@@ -69,6 +69,58 @@ class ClassifyTestCase(unittest.TestCase):
         )
         self.assertEqual(self._classify(msg), "APPLICATION")
 
+    def test_oh_so_application_receipt_classified_as_application(self):
+        msg = make_plain_message(
+            subject="OH-SO - Thank you for your application // Vielen Dank für Deine Bewerbung",
+            from_addr="talent@oh-so.com",
+            body="Deine Bewerbungsunterlagen sind bei uns eingegangen.",
+        )
+        self.assertEqual(self._classify(msg), "APPLICATION")
+
+    def test_bundesbank_application_body_classified_as_application(self):
+        msg = make_plain_message(
+            subject="Deutsche Bundesbank Bewerbermanagement - Willkommen!",
+            from_addr="noreply@recruiting-bundesbank.de",
+            body="Ihre Bewerbung ist bis zur Freigabe durch Sie hinterlegt.",
+        )
+        self.assertEqual(self._classify(msg), "APPLICATION")
+
+    def test_newsletter_body_application_word_does_not_classify_as_application(self):
+        msg = make_plain_message(
+            subject="Unsere persönlichen Empfehlungen für Sie!",
+            from_addr="newsletter@info.shop-apotheke.com",
+            body="Die Hinweise stellen keine Empfehlung oder Bewerbung des Medikaments dar.",
+            list_unsubscribe="<https://shop-apotheke.com/unsubscribe>",
+        )
+        self.assertEqual(self._classify(msg), "REVIEW")
+
+    def test_ai_newsletter_body_interview_word_does_not_classify_as_application(self):
+        msg = make_plain_message(
+            subject="DataTalks.Club Weekly",
+            from_addr="alexey@datatalks.club",
+            body="Learn how to prepare for each interview stage.",
+            list_unsubscribe="<https://datatalks.club/unsubscribe>",
+        )
+        self.assertEqual(self._classify(msg), "REVIEW")
+
+    def test_ai_newsletter_body_onboarding_word_does_not_classify_as_application(self):
+        msg = make_plain_message(
+            subject="19 startups making AI more efficient",
+            from_addr="sifted@sifted.eu",
+            body="LLM video guides for training, onboarding and support.",
+            list_unsubscribe="<https://sifted.eu/unsubscribe>",
+        )
+        self.assertEqual(self._classify(msg), "REVIEW")
+
+    def test_newsletter_application_subject_still_classifies_as_application(self):
+        msg = make_plain_message(
+            subject="Status Ihrer Bewerbung",
+            from_addr="updates@recruiting.example",
+            body="Bitte öffnen Sie das Bewerbungsportal.",
+            list_unsubscribe="<https://recruiting.example/unsubscribe>",
+        )
+        self.assertEqual(self._classify(msg), "APPLICATION")
+
     def test_security_deadline_mail_classified_as_important(self):
         msg = make_plain_message(
             subject="Sicherheitswarnung: neue Anmeldung erkannt",

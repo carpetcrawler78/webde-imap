@@ -128,7 +128,11 @@ def classify_message(message, content, rules):
         return "IGNORE"
 
     application_keywords = rules.get("application_keywords", {}).get("subject_or_body", [])
-    if _matches_any(subject_lower, application_keywords) or _matches_any(body_lower, application_keywords):
+    application_subject_hit = _matches_any(subject_lower, application_keywords)
+    application_body_hit = _matches_any(body_lower, application_keywords)
+    # Newsletter prose often mentions recruiting concepts incidentally. Keep an
+    # explicit subject match, but do not promote a list mail on a body-only hit.
+    if application_subject_hit or (application_body_hit and not has_list_unsubscribe):
         return "APPLICATION"
 
     important_keywords = rules.get("important_keywords", {}).get("subject_or_body", [])
