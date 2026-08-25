@@ -122,9 +122,9 @@ def classify_message(message, content, rules):
         # newsletters (e.g. association/club mailings) omit that header entirely.
         return "IGNORE"
 
-    if _is_topic_override_sender(message, ignore_signals) and not _has_topic_override_keyword(
-        subject_lower, body_lower, ignore_signals
-    ):
+    is_topic_override_sender = _is_topic_override_sender(message, ignore_signals)
+    has_topic_override = _has_topic_override_keyword(subject_lower, body_lower, ignore_signals)
+    if is_topic_override_sender and not has_topic_override:
         return "IGNORE"
 
     application_keywords = rules.get("application_keywords", {}).get("subject_or_body", [])
@@ -141,7 +141,7 @@ def classify_message(message, content, rules):
 
     ignore_keywords = ignore_signals.get("subject_or_body_keywords", [])
     keyword_hit = _matches_any(subject_lower, ignore_keywords) or _matches_any(body_lower, ignore_keywords)
-    if has_list_unsubscribe and keyword_hit:
+    if has_list_unsubscribe and keyword_hit and not (is_topic_override_sender and has_topic_override):
         return "IGNORE"
 
     return "REVIEW"

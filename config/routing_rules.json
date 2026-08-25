@@ -84,7 +84,9 @@
       "rabatt", "gutschein", "black friday", "cyber monday", "% off",
       "jetzt einkaufen", "sale", "angebot der woche", "newsletter abbestellen"
     ],
-    "sender_domains": ["finanztip.de", "e-zeitung.vdk.de", "neuefische.de"],
+    "sender_domains": [
+      "finanztip.de", "e-zeitung.vdk.de", "neuefische.de", "info.shop-apotheke.com"
+    ],
     "sender_local_parts": ["dastutmirgut"],
     "topic_override_sender_domains": [
       "angebote.spiegel.de", "background.tagesspiegel.de", "email.wiwo.de",

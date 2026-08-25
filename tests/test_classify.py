@@ -89,10 +89,13 @@ class ClassifyTestCase(unittest.TestCase):
         msg = make_plain_message(
             subject="Unsere persönlichen Empfehlungen für Sie!",
             from_addr="newsletter@info.shop-apotheke.com",
-            body="Die Hinweise stellen keine Empfehlung oder Bewerbung des Medikaments dar.",
+            body=(
+                "Die Hinweise stellen keine Empfehlung oder Bewerbung des Medikaments dar. "
+                "Rabatt, Gutschein und Rechnung."
+            ),
             list_unsubscribe="<https://shop-apotheke.com/unsubscribe>",
         )
-        self.assertEqual(self._classify(msg), "REVIEW")
+        self.assertEqual(self._classify(msg), "IGNORE")
 
     def test_ai_newsletter_body_interview_word_does_not_classify_as_application(self):
         msg = make_plain_message(
@@ -107,7 +110,7 @@ class ClassifyTestCase(unittest.TestCase):
         msg = make_plain_message(
             subject="19 startups making AI more efficient",
             from_addr="sifted@sifted.eu",
-            body="LLM video guides for training, onboarding and support.",
+            body="LLM video guides for training, onboarding and support; one startup is for sale.",
             list_unsubscribe="<https://sifted.eu/unsubscribe>",
         )
         self.assertEqual(self._classify(msg), "REVIEW")
