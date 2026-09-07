@@ -9,11 +9,11 @@
       "uidvalidity": 1338215502
     },
     "Unbekannt": {
-      "last_processed_uid": 1374061945,
+      "last_processed_uid": 1374061947,
       "uidvalidity": 1
     }
   },
-  "last_run_at_utc": "2026-09-07T00:18:11+00:00",
+  "last_run_at_utc": "2026-09-07T04:55:31+00:00",
   "last_run_status": "OK",
   "version": 2
 }
