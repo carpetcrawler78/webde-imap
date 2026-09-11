@@ -1,19 +1,19 @@
 {
   "folders": {
     "INBOX": {
-      "last_processed_uid": 1374040436,
+      "last_processed_uid": 1374040437,
       "uidvalidity": 1
     },
     "Social Media": {
-      "last_processed_uid": 2589,
+      "last_processed_uid": 2591,
       "uidvalidity": 1338215502
     },
     "Unbekannt": {
-      "last_processed_uid": 1374062005,
+      "last_processed_uid": 1374062007,
       "uidvalidity": 1
     }
   },
-  "last_run_at_utc": "2026-09-11T10:17:59+00:00",
+  "last_run_at_utc": "2026-09-11T14:29:57+00:00",
   "last_run_status": "OK",
   "version": 2
 }
